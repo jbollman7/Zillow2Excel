@@ -10,8 +10,11 @@ namespace Zillow2Excel
     {
         static void Main(string[] args)
         {
-            var UrlList = Import.ImportCsv("C:\\Users\\joseph.bollman\\test.csv");
-            foreach (var url in UrlList)
+            //Create outfilepath
+            string filepath = @"C:\Users\joseph.bollman\output.xlsx";
+            //Export.CreateFile(filepath);
+            string[] Urls = System.IO.File.ReadAllLines(@"C:\Users\joseph.bollman\urlList.txt");
+            foreach (var url in Urls)
             {
                 using HttpClient client = new HttpClient();
                 var response = client.GetAsync(url).Result;
@@ -22,14 +25,12 @@ namespace Zillow2Excel
                     var resultString = content.ReadAsStringAsync().Result;
                     Root json = JsonConvert.DeserializeObject<Root>(resultString);
                     homeList = json.cat1.searchResults.listResults;
-
                 }
                 else
                     throw new HttpRequestException();
 
                 var populate = Export.PopulateDataTable(homeList);
-                string filepath = "C:\\Users\\joseph.bollman\\Documents\\testy.xlsx";
-                Export.WriteDataToExcel(filepath, populate);
+                Export.WriteDataToExcel(filepath, populate, "Manhattan");
             }
         }
     }

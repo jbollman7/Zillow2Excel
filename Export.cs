@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using Zillow2Excel.Models;
 using ClosedXML.Excel;
+using System.IO;
 
 namespace Zillow2Excel
 {
@@ -61,14 +62,26 @@ namespace Zillow2Excel
             return dt;
 
         }
-        public static void WriteDataToExcel(string filepath, DataTable completedDatatable)
+        public static void WriteDataToExcel(string filepath, DataTable completedDatatable, string workSheetName)
         {
-            using (XLWorkbook wb = new XLWorkbook())
+            //int rowToAppend = 1;
+            using (XLWorkbook Workbook = new XLWorkbook())
             {
-                //Add DataTable in worksheet
-                wb.Worksheets.Add(completedDatatable, "Manhattan");
-                wb.SaveAs(filepath);
+
+                Workbook.Worksheets.Add(completedDatatable, workSheetName);
+                //int rowToAppend = WorkSheet.LastRowUsed().RowNumber();
+                //IXLCell CellForNewData = WorkSheet.Cell(rowToAppend, 1); //row and column to start on
+                //CellForNewData.InsertTable(completedDatatable);
+                Workbook.SaveAs(filepath);
             }
+        }
+
+        public static void CreateFile(string filepath)
+        {
+            string fileInfo = System.IO.Path.Combine(filepath);
+            if (!System.IO.File.Exists(filepath))
+                //Directory.CreateDirectory(fileInfo);
+                File.Create(fileInfo);
         }
 
     }
